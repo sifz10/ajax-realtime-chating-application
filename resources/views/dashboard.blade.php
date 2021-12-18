@@ -22,17 +22,7 @@
               Sifat Kazi
             </div>
             <div class="card-body">
-              @forelse ($messages as $message)
-                <div class="alert alert-warning">
-                  <p>{{ $message->message }}</p>
-                </div>
-              @empty
-                <div class="alert alert-danger">
-                  <p>No Message Found</p>
-                </div>
-              @endforelse
               <div id="text">
-
               </div>
               <form action="" method="">
                 @csrf
@@ -49,6 +39,28 @@
       </div>
     </div>
     <script>
+
+   let myInterval = setInterval(messageUpdate, 1000);
+
+    function messageUpdate() {
+      $(document).ready(function(){
+        $.ajax({
+            url: 'messages',
+            type: 'GET',
+            dataType: 'json',
+
+         success: function(data) {
+           $("#text").empty();
+           for (var i = 0; i < data.length; i++) {
+             $("#text").append('<div class="alert alert-warning">'+data[i].message+'</div>');
+           }
+         },
+         error: function () { alert('error'); },
+         });
+      });
+    }
+
+
         $("#form_submit").click(function(e) {
             e.preventDefault();
             var user_id = $('#user_id').val();
@@ -72,7 +84,17 @@
                     },
                     success: function(data) {
                       $("#message").val(' ')
-                      $("#text").append('<div class="alert alert-warning">'+message+'</div>')
+                      $.ajax({
+                          url: 'messages',
+                          type: 'GET',
+                          dataType: 'json',
+
+                       success: function(data) {
+                           $("#text").append('<div class="alert alert-warning">'+data[data.length-1].message+'</div>');
+
+                       },
+                       error: function () { alert('error'); },
+                       });
                     }
                 });
             });
